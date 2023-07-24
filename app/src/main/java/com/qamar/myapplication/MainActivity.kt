@@ -21,6 +21,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -56,7 +57,6 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             MyApplicationTheme {
-                // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -82,7 +82,11 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun StaticImage(img: Int) {
-    val dynamicColor = DynamicColor(img, LocalContext.current)
+    val context = LocalContext.current
+    var dynamicColor: DynamicColor? = null
+    LaunchedEffect(Unit) {
+        dynamicColor = DynamicColor(img, context)
+    }
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -140,12 +144,12 @@ fun StaticImage(img: Int) {
                 .alpha(0.98f)
         ) {
             Image(
-              painterResource(id = img),
+                painterResource(id = img),
                 contentDescription = "",
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop,
                 colorFilter = ColorFilter.tint(
-                    dynamicColor.imageDynamicColor,
+                    dynamicColor?.imageDynamicColor ?: Color.Transparent,
                     BlendMode.Dst
                 )
 
@@ -199,10 +203,16 @@ fun StaticImage(img: Int) {
 
 @Composable
 fun OnlineImage(img: String) {
-    val dynamicColor = DynamicColorOnline(
-        img, LocalContext.current,
-        rememberCoroutineScope()
-    )
+    var dynamicColor: DynamicColorOnline? = null
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    LaunchedEffect(Unit) {
+        dynamicColor = DynamicColorOnline(
+            img,
+            context,
+            scope
+        )
+    }
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -264,7 +274,7 @@ fun OnlineImage(img: String) {
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop,
                 colorFilter = ColorFilter.tint(
-                    dynamicColor.imageDynamicColor,
+                    dynamicColor?.imageDynamicColor ?: Color.Transparent,
                     BlendMode.Dst
                 )
 

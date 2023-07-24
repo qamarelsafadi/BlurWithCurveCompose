@@ -11,7 +11,7 @@ import coil.request.ImageRequest
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-class DynamicColor(drawable: Int, context: Context) {
+class DynamicColor(val drawable: Int, context: Context) {
     private val bitmap: Bitmap = BitmapFactory.decodeResource(context.resources, drawable)
     private val palette: Palette = Palette.from(bitmap)
         .addFilter { _, hsl ->
